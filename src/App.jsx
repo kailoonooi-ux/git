@@ -665,7 +665,7 @@ function App() {
   return (
     <div className="min-h-screen text-ink">
       <header className="border-b border-ink/15 bg-paper/90 backdrop-blur">
-        <div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-end lg:justify-between lg:px-8">
+        <div className="mx-auto grid max-w-[1500px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_520px] lg:items-end lg:px-8">
           <div className="max-w-3xl">
             <div className="mb-3 flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-signal">
               <Github className="h-4 w-4" aria-hidden="true" />
@@ -679,10 +679,13 @@ function App() {
               recovery, and day-to-day command fluency.
             </p>
           </div>
-          <div className="grid grid-cols-3 overflow-hidden rounded border border-ink/20 bg-white/55 shadow-insetLine sm:min-w-[430px]">
-            <Metric value={lessons.length} label="lessons" />
-            <Metric value={commandCount} label="commands" />
-            <Metric value={`${progress}%`} label="complete" />
+          <div className="space-y-3">
+            <HeaderGraphic />
+            <div className="grid grid-cols-3 overflow-hidden rounded border border-ink/20 bg-white/55 shadow-insetLine">
+              <Metric value={lessons.length} label="lessons" />
+              <Metric value={commandCount} label="commands" />
+              <Metric value={`${progress}%`} label="complete" />
+            </div>
           </div>
         </div>
       </header>
@@ -993,6 +996,59 @@ function Metric({ value, label }) {
         {label}
       </div>
     </div>
+  );
+}
+
+function HeaderGraphic() {
+  const nodes = [
+    { label: "Local", command: "git add", icon: Terminal },
+    { label: "Commit", command: "git commit", icon: GitBranch },
+    { label: "GitHub", command: "git push", icon: Github },
+    { label: "Review", command: "pull request", icon: GitPullRequest },
+  ];
+
+  return (
+    <figure className="relative overflow-hidden rounded border border-ink/20 bg-graphite p-4 text-paper shadow-insetLine">
+      <div className="blueprint-lines absolute inset-0 opacity-70" aria-hidden="true" />
+      <div className="relative">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <figcaption className="text-xs font-bold uppercase tracking-[0.16em] text-flax">
+            git flow graphic
+          </figcaption>
+          <span className="inline-flex items-center gap-1.5 rounded border border-paper/15 bg-paper/10 px-2 py-1 font-mono text-[11px] text-paper/80">
+            <UploadCloud className="h-3.5 w-3.5" aria-hidden="true" />
+            origin/main
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-[1fr_18px_1fr_18px_1fr_18px_1fr]">
+          {nodes.map((node, index) => {
+            const NodeIcon = node.icon;
+            return (
+              <div key={node.label} className="contents">
+                <div className="min-h-24 rounded border border-paper/15 bg-ink/35 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-paper/60">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <NodeIcon className="h-4 w-4 text-flax" aria-hidden="true" />
+                  </div>
+                  <p className="mt-4 text-sm font-bold">{node.label}</p>
+                  <code className="mt-2 block rounded bg-paper/10 px-2 py-1 font-mono text-[11px] text-paper/85">
+                    {node.command}
+                  </code>
+                </div>
+                {index < nodes.length - 1 && (
+                  <div className="hidden items-center justify-center sm:flex" aria-hidden="true">
+                    <div className="h-px w-full bg-flax" />
+                    <div className="h-2 w-2 rotate-45 border-r border-t border-flax" />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </figure>
   );
 }
 
